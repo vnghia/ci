@@ -18,7 +18,9 @@ jobs:
         with:
           python-version: 3.9
       - name: Windows
+        env:
+          SERVICE: "s3"
         shell: pwsh
         run: |
-          Write-Host "Hello World"
-          python3 -m pip install localstack
+          python3 -m pip install wheel localstack
+          localstack start
