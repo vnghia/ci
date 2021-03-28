@@ -1,0 +1,20 @@
+name: GitHub CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - name: Windows
+        shell: pwsh
+        run: |
+          Write-Host "Hello World"
