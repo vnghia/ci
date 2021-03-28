@@ -14,8 +14,11 @@ jobs:
     name: Windows
     runs-on: windows-latest
     steps:
+      - uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
       - name: Windows
         shell: pwsh
         run: |
           Write-Host "Hello World"
-          docker pull localstack/localstack
+          python3 -m pip install localstack
