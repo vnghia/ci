@@ -18,3 +18,4 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Hello World"
+          docker run hello-world
