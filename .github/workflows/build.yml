@@ -18,11 +18,8 @@ jobs:
         with:
           python-version: 3.9
       - name: Windows
-        env:
-          SERVICE: "s3"
-          LAMBDA_EXECUTOR: "local"
         shell: pwsh
         run: |
           python3 -m pip install wheel
           python3 -m pip install localstack
-          localstack start
+          $env:SERVICES = 's3'; localstack start
