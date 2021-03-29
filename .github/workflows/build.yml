@@ -20,6 +20,4 @@ jobs:
       - name: Windows
         shell: pwsh
         run: |
-          python3 -m pip install wheel
-          python3 -m pip install localstack
-          $env:SERVICES = 's3'; localstack start
+          docker run --rm busybox echo hello_world
