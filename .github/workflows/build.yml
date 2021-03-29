@@ -17,7 +17,23 @@ jobs:
       - uses: actions/setup-python@v1
         with:
           python-version: 3.9
+      - uses: Vampire/setup-wsl@v1
+        with:
+          distribution: Ubuntu-20.04
+          additional-packages:
+            python3-pip
+            apt-transport-https 
+            ca-certificates 
+            curl 
+            software-properties-common
       - name: Windows
-        shell: pwsh
+        shell: wsl-bash_Ubuntu-20.04 -u root {0}
         run: |
-          docker run --rm busybox echo hello_world
+          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+          sudo apt update
+          sudo apt -y install docker-ce
+          sudo service docker status
+          pip3 install wheel
+          pip3 install localstack
+          localstack start
