@@ -10,30 +10,73 @@ on:
 
 jobs:
 
-  windows:
-    name: Windows
-    runs-on: windows-latest
+  # windows:
+  #   name: Windows
+  #   runs-on: windows-latest
+  #   steps:
+  #     - uses: actions/setup-python@v1
+  #       with:
+  #         python-version: 3.9
+  #     - uses: Vampire/setup-wsl@v1
+  #       with:
+  #         distribution: Ubuntu-20.04
+  #         additional-packages:
+  #           python3-pip
+  #           apt-transport-https 
+  #           ca-certificates 
+  #           curl 
+  #           software-properties-common
+  #     - name: Windows
+  #       shell: wsl-bash_Ubuntu-20.04 -u root {0}
+  #       run: |
+  #         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  #         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+  #         sudo apt update
+  #         sudo apt -y install docker-ce
+  #         sudo service docker status
+  #         pip3 install wheel
+  #         pip3 install localstack
+  #         localstack start
+
+  macos:
+    name: Build Hadoop native lib on MacOS
+    runs-on: macos-latest
     steps:
-      - uses: actions/setup-python@v1
+      - uses: actions/checkout@v2
         with:
-          python-version: 3.9
-      - uses: Vampire/setup-wsl@v1
+          repository: 'apache/hadoop'
+          ref: 'rel/release-2.7.7'
+          path: 'hadoop'
+      - uses: actions/setup-java@v2
         with:
-          distribution: Ubuntu-20.04
-          additional-packages:
-            python3-pip
-            apt-transport-https 
-            ca-certificates 
-            curl 
-            software-properties-common
-      - name: Windows
-        shell: wsl-bash_Ubuntu-20.04 -u root {0}
+          distribution: 'adopt'
+          java-version: '8'
+      - name: Install dependencies
         run: |
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-          sudo apt update
-          sudo apt -y install docker-ce
-          sudo service docker status
-          pip3 install wheel
-          pip3 install localstack
-          localstack start
+          brew install wget gcc autoconf automake libtool cmake snappy gzip bzip2 zlib lz4 openssl
+          echo 'export PATH="/usr/local/opt/bzip2/bin:$PATH"' >> /Users/runner/.bash_profile
+          echo 'export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"' >> /Users/runner/.bash_profile
+      - name: Install Protobuf 3.7.1
+        run: |
+          wget https://github.com/protocolbuffers/protobuf/releases/download/v3.7.1/protobuf-java-3.7.1.tar.gz
+          mkdir -p protobuf-3.7 && tar zxvf protobuf-java-3.7.1.tar.gz --strip-components 1 -C protobuf-3.7
+          cd protobuf-3.7
+          ./configure
+          make -j$(sysctl -n hw.logicalcpu)
+          sudo make install
+          protoc --version
+      - name: Build Hadoop
+        run: |
+          export LDFLAGS="-L/usr/local/opt/bzip2/lib $LDFLAGS"
+          export LDFLAGS="-L/usr/local/opt/zlib/lib $LDFLAGS"
+          export LDFLAGS="-L/usr/local/opt/openssl@1.1/lib $LDFLAGS"
+
+          export CPPFLAGS="-I/usr/local/opt/bzip2/include $CPPFLAGS"
+          export CPPFLAGS="-I/usr/local/opt/zlib/include $CPPFLAGS"
+          export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include $CPPFLAGS"
+
+          export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig:$PKG_CONFIG_PATH"
+          export PKG_CONFIG_PATH="/usr/local/opt/openssl@1.1/lib/pkgconfig:$PKG_CONFIG_PATH"
+
+          cd hadoop
+          mvn -T$(sysctl -n hw.logicalcpu) -e package -Pdist,native -DskipTests -Dmaven.javadoc.skip -Dopenssl.prefix=$(brew --prefix openssl)
