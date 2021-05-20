@@ -8,12 +8,21 @@ on:
     branches:
       - main
 
+env:
+  REPO_NAME: ${{ github.repository }}
+  EVENT_NAME: ${{ github.event_name }}
+
 jobs:
-  macos:
+  ubuntu:
     name: Test
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:20.04
     steps:
       - uses: actions/checkout@v2
       - name: Test
+        shell: bash
         run: |
-          sudo TEST_ENV="test_env" bash -e ./code.sh
+          apt update
+          apt-get install -y python3
+          python3 --version
