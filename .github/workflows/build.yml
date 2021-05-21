@@ -11,18 +11,24 @@ on:
 env:
   REPO_NAME: ${{ github.repository }}
   EVENT_NAME: ${{ github.event_name }}
+  HOMEBREW_NO_AUTO_UPDATE: 1
 
 jobs:
-  ubuntu:
-    name: Test
-    runs-on: ubuntu-latest
-    container:
-      image: ubuntu:20.04
+  macos-docker:
+    name: Docker
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Test
-        shell: bash
-        run: |
-          apt update
-          apt-get install -y python3
-          python3 --version
+      - name: Cache Brew
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/Library/Caches/Homebrew/downloads/*Docker*
+          key: MacOS-Brew
+      - uses: docker-practice/actions-setup-docker@master
+      - run: |
+          set -e -x
+          docker --version
+          docker run --rm -it -p 4566:4566 -p 4571:4571 -e "SERVICES=dynamodb,s3" -d localstack/localstack
+          sleep 30
+          curl http://localhost:4566/health
