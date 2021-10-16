@@ -19,14 +19,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Brew
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/Library/Caches/Homebrew/downloads/*Docker*
-          key: MacOS-Brew
-      - uses: docker-practice/actions-setup-docker@master
+      # - name: Cache Brew
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: |
+      #       ~/Library/Caches/Homebrew/downloads/*
+      #     key: MacOS-Brew
       - run: |
+          brew install docker
+          brew install colima
+      - run: |
+          colima start
           set -e -x
           docker --version
           docker run --rm -it -p 4566:4566 -p 4571:4571 -e "SERVICES=dynamodb,s3" -d localstack/localstack
