@@ -28,7 +28,9 @@ jobs:
       - run: |
           brew update
           brew install docker
-          brew install colima
+          brew install lima
+          curl -LO https://github.com/abiosoft/colima/releases/download/v0.2.2/colima-amd64 && sudo install colima-amd64 /usr/local/bin/colima
+
       - run: |
           colima start
           set -e -x
