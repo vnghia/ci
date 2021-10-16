@@ -26,7 +26,7 @@ jobs:
       #       ~/Library/Caches/Homebrew/downloads/*
       #     key: MacOS-Brew
       - run: |
-          brew upgrade
+          brew update
           brew install docker
           brew install colima
       - run: |
