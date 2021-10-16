@@ -29,6 +29,7 @@ jobs:
           brew update
           brew install docker
           brew install lima
+          brew deps --tree --installed qemu
           curl -LO https://github.com/abiosoft/colima/releases/download/v0.2.2/colima-amd64 && sudo install colima-amd64 /usr/local/bin/colima
 
       - run: |
