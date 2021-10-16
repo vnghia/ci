@@ -19,12 +19,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      # - name: Cache Brew
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       ~/Library/Caches/Homebrew/downloads/*
-      #     key: MacOS-Brew
+      - name: Cache Brew
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/Library/Caches/Homebrew/downloads/*
+          key: MacOS-Brew
       - run: |
           brew update
           brew install docker
