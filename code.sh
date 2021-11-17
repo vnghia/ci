@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 echo Hello
-echo $TEST_ENV
+telnet broker3.packetai.co 19092
 echo End
