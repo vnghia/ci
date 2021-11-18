@@ -14,28 +14,34 @@ env:
   HOMEBREW_NO_AUTO_UPDATE: 1
 
 jobs:
-  macos-docker:
-    name: Docker
-    runs-on: macos-latest
+  ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Cache Brew
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/Library/Caches/Homebrew/downloads/*
-          key: MacOS-Brew
-      - run: |
-          brew update
-          brew install docker
-          brew install lima
-          brew deps --tree --installed qemu
-          curl -LO https://github.com/abiosoft/colima/releases/download/v0.2.2/colima-amd64 && sudo install colima-amd64 /usr/local/bin/colima
+      - run: ./code.sh
+  # macos-docker:
+  #   name: Docker
+  #   runs-on: macos-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Cache Brew
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: |
+  #           ~/Library/Caches/Homebrew/downloads/*
+  #         key: MacOS-Brew
+  #     - run: |
+  #         brew update
+  #         brew install docker
+  #         brew install lima
+  #         brew deps --tree --installed qemu
+  #         curl -LO https://github.com/abiosoft/colima/releases/download/v0.2.2/colima-amd64 && sudo install colima-amd64 /usr/local/bin/colima
 
-      - run: |
-          colima start
-          set -e -x
-          docker --version
-          docker run --rm -it -p 4566:4566 -p 4571:4571 -e "SERVICES=dynamodb,s3" -d localstack/localstack
-          sleep 30
-          curl http://localhost:4566/health
+  #     - run: |
+  #         colima start
+  #         set -e -x
+  #         docker --version
+  #         docker run --rm -it -p 4566:4566 -p 4571:4571 -e "SERVICES=dynamodb,s3" -d localstack/localstack
+  #         sleep 30
+  #         curl http://localhost:4566/health
