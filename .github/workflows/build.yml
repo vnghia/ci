@@ -14,12 +14,12 @@ env:
   HOMEBREW_NO_AUTO_UPDATE: 1
 
 jobs:
-  ubuntu:
-    name: Ubuntu
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: ./code.sh
+  # ubuntu:
+  #   name: Ubuntu
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - run: ./code.sh
   # macos-docker:
   #   name: Docker
   #   runs-on: macos-latest
