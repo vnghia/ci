@@ -1,0 +1,6 @@
+options(install.packages.compile.from.source = "always")
+install.packages("ggplot2")
+install.packages("dplyr")
+install.packages("gganimate")
+install.packages("tidyr")
+install.packages("magick")
